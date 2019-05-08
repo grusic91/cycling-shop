@@ -5,7 +5,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const indexRouter   = require('./routes/index');
-const usersRouter   = require('./routes/users');
 const postsRouter   = require('./routes/posts');
 const reviewsRouter = require('./routes/reviews');
 
@@ -25,10 +24,8 @@ app.use(express.static(path.join(__dirname, 'public')));
    they are actually hitting root route
    handled in apropriate file in routes folder */
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
 app.use('/posts/:id/reviews', reviewsRouter);
-// app.use('')
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
