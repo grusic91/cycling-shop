@@ -1,11 +1,14 @@
 const createError = require('http-errors');
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const passportLocalMongoose
+const passportLocalMongoose = require('passport-local-mongoose');
+const session = require('express-session');
 const logger = require('morgan');
+const config = require('./config/dev');
 
 //require model
 const User = require('./models/user');
@@ -17,6 +20,14 @@ const reviewsRouter = require('./routes/reviews');
 
 const app = express();
 
+//connect to DB
+mongoose.connect(config.DB_URI, { useNewUrlParser: true });
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, "connection error:"));
+db.once('open', () => {
+  console.log("we're connected!");
+})
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
