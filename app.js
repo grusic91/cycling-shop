@@ -2,8 +2,15 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const passportLocalMongoose
 const logger = require('morgan');
 
+//require model
+const User = require('./models/user');
+
+//require routes
 const indexRouter   = require('./routes/index');
 const postsRouter   = require('./routes/posts');
 const reviewsRouter = require('./routes/reviews');
@@ -20,7 +27,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-/* any time users visite some of this paths,
+//Configure Passport and Sessions
+//Session needs to come before configuring passport
+app.use(session({
+  secret: 'hang tang dude!',
+  resave: false,
+  saveUninitialized: true
+}));
+
+// Change: USE "createStrategy" INSTEAD OF "authenticate"
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+/*
+   -- Moint Routes --
+   any time users visite some of this paths,
    they are actually hitting root route
    handled in apropriate file in routes folder */
 app.use('/', indexRouter);
