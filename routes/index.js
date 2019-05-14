@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
-const { postRegister } = require('../controllers/index');
+const { postRegister,
+        postLogin,
+        getLogout }    = require('../controllers/index');
 const { errorHandler } = require('../middleware');
 
 
@@ -24,16 +25,10 @@ router.get('/login',(req, res, next) => {
 });
 
 /* POST login. */
-router.post('/login', passport.authenticate('local', {
-  successRedirect: '/', //on successfull take us on homepage
-  failureRedirect: '/login' //on failure take us on longin view page
-}));
+router.post('/login', postLogin);
 
 //GET logout
-router.get('/logout', (req, res, next) => {
-  req.logout();
-  res.redirect('/');
-});
+router.get('/logout', getLogout);
 
 /* GET profile.
    /profile will display contained login informations */
