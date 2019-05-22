@@ -13,7 +13,7 @@ module.exports = {
     await User.register(newUser, req.body.password);
     res.redirect('/');
   },
-
+  
   /*Login controller*/
   postLogin(req, res, next) {
     passport.authenticate('local', {
@@ -21,7 +21,7 @@ module.exports = {
       failureRedirect: '/login' //on failure take us on longin view page
     })(req, res, next);
   },
-  
+
  /*logout controllers*/
   getLogout(req, res, next) {
     req.logout();

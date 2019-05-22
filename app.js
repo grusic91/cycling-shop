@@ -21,7 +21,8 @@ const reviewsRouter = require('./routes/reviews');
 const app = express();
 
 //connect to DB
-mongoose.connect(config.DB_URI, { useNewUrlParser: true });
+mongoose.connect(config.DB_URI, { useNewUrlParser: true,
+                                  useCreateIndex: true });
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, "connection error:"));
@@ -39,7 +40,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Configure Passport and Sessions
-//Session needs to come before configuring passport
+//Session needs to come before configuring passport otherwise passport won't work
 app.use(session({
   secret: 'hang tang dude!',
   resave: false,
