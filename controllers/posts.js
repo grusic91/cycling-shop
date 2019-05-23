@@ -1,7 +1,7 @@
 const Post = require('../models/post');
 
 module.exports = {
-
+ /*Posts Index*/
   async getPosts(req, res, next) {
     // we need to get acces to all of the posts
     let posts = await Post.find({}); //with empty object inside find we get all the posts in the posts collection.
@@ -9,5 +9,18 @@ module.exports = {
     res.render('posts/index', { posts }); //we go from views (which express looks by default)
     //down to posts and render index file at which point we pass in the posts like {posts: posts}
   },
-  
+
+  /*Posts New*/
+  newPost(req, res, next) {
+    //render the view for creating a new post
+    res.render('posts/new');
+  },
+
+  /* Post Create*/
+  async createPost(req, res, next) {
+    //use req.body to create a new Post
+    let post = await Post.create(req.body); //once we have a post we redirect post with id
+    res.redirect(`/posts/${post.id}`); //this is show page
+  }
+
 }
