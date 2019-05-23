@@ -1,11 +1,13 @@
-const express = require('express');
-const router = express.Router();
+const express           = require('express');
+const router            = express.Router();
+const { errorHandler }  = require('../middleware');
+const { getPosts }      = require('../controllers/posts');
 
 /* GET index /posts
-   this is posts even it has foreslash */
-router.get('/',(req, res, next) => {
-  res.send("INDEX /posts");
-});
+   this is posts even it has foreslash
+   in this route we want to have a view that displys all the different posts from all the diff users
+*/
+router.get('/', errorHandler(getPosts));
 
 /* GET new /posts/new
    this is posts/new */

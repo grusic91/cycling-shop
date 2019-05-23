@@ -10,15 +10,15 @@ const PostSchema = new Schema({
   lat: Number,
   long: Number,
   author: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+          },
   reviews: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Review'
-    }
-  ]
+    },
+  ],
 });
 
 module.exports = mongoose.model('Post', PostSchema);
