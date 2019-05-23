@@ -1,7 +1,8 @@
-const express           = require('express');
-const router            = express.Router();
-const { errorHandler }  = require('../middleware');
-const { getPosts }      = require('../controllers/posts');
+const express             = require('express');
+const router              = express.Router();
+const { errorHandler }    = require('../middleware');
+const { getPosts, newPost,
+        createPost }      = require('../controllers/posts');
 
 /* GET index /posts
    this is posts even it has foreslash
@@ -11,15 +12,11 @@ router.get('/', errorHandler(getPosts));
 
 /* GET new /posts/new
    this is posts/new */
-router.get('/new',(req, res, next) => {
-  res.send("NEW /posts/new");
-});
+router.get('/new', newPost);
 
 /* POST create /posts
    this is create posts */
-router.post('/',(req, res, next) => {
-  res.send("CREATE /posts");
-});
+router.post('/', errorHandler(createPost));
 
 /* GET show  /posts/:id
    this is create posts */
