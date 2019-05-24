@@ -1,1 +1,11 @@
 <h1>Posts Index!</h1>
+
+<!-- Iterate over all those posts that we're passing in as local variable -->
+<% posts.forEach(function(post) { %>
+  <div>
+    <h2><%= post.title %></h2>
+    <div class="">Price: <%= post.price %></div>
+    <div><%= post.description %></div>
+    <div><%= post.location %></div>
+  </div>
+<% }); %>
