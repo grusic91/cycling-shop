@@ -45,5 +45,10 @@ module.exports = {
       and redirect to the show page of that post.*/
       let post = await Post.findByIdAndUpdate(req.params.id, req.body.post, { new: true }); //new: true returns updated version
       res.redirect(`/posts/${post.id}`); //this is show page
+  },
+
+  async postDelete(req, res, next) {
+    let post = await Post.findByIdAndRemove(req.params.id);
+    res.redirect('/posts');
   }
 }
