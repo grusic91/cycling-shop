@@ -21,6 +21,14 @@ module.exports = {
     //use req.body to create a new Post
     let post = await Post.create(req.body); //once we have a post we redirect post with id
     res.redirect(`/posts/${post.id}`); //this is show page
-  }
+  },
+
+  // Post Show
+  async showPost(req, res, next) {
+    /*We use the post model to find the post by ID that get passed in to the params
+     Once we find that post then render to show view*/
+     let post = await Post.findById(req.params.id);
+     res.render('posts/show', { post });
+  },
 
 }

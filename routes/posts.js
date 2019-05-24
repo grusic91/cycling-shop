@@ -2,7 +2,7 @@ const express             = require('express');
 const router              = express.Router();
 const { errorHandler }    = require('../middleware');
 const { getPosts, newPost,
-        createPost }      = require('../controllers/posts');
+        createPost, showPost }      = require('../controllers/posts');
 
 /* GET index /posts
    this is posts even it has foreslash
@@ -20,9 +20,7 @@ router.post('/', errorHandler(createPost));
 
 /* GET show  /posts/:id
    this is create posts */
-router.get('/:id',(req, res, next) => {
-  res.send("SHOW /posts/:id");
-});
+router.get('/:id', errorHandler(showPost));
 
 /* GET edit /posts/:id/edit
    this is edit posts */
