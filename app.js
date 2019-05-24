@@ -8,6 +8,7 @@ const passport = require('passport');
 const passportLocalMongoose = require('passport-local-mongoose');
 const session = require('express-session');
 const logger = require('morgan');
+const methodOverride = require('method-override');
 const config = require('./config/dev');
 
 //require model
@@ -35,9 +36,10 @@ app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'));
 
 //Configure Passport and Sessions
 //Session needs to come before configuring passport otherwise passport won't work
