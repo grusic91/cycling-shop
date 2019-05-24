@@ -1,9 +1,14 @@
-const express             = require('express');
-const router              = express.Router();
-const { asyncErrorHandler }    = require('../middleware');
-const { postIndex, postNew,
-        postCreate, postShow,
-        postEdit, postUpdate }      = require('../controllers/posts');
+const express               = require('express');
+const router                = express.Router();
+const { asyncErrorHandler } = require('../middleware');
+const {
+  postIndex,
+  postNew,
+  postCreate,
+  postShow,
+  postEdit,
+  postUpdate,
+  postDelete }              = require('../controllers/posts');
 
 /* GET index /posts
    this is posts even it has foreslash
@@ -33,9 +38,7 @@ router.put('/:id', asyncErrorHandler(postUpdate));
 
 /* DELETE destroy /posts/:id
    this is destroy posts */
-router.delete('/:id',(req, res, next) => {
-  res.send("DELETE posts/:id");
-});
+router.delete('/:id', asyncErrorHandler(postDelete));
 
 
 module.exports = router;
