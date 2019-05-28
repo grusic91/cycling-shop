@@ -1,20 +1,46 @@
 <h1>Edit Post!</h1>
 
-<form action="/posts/<%= post.id %>?_method=PUT" method="POST">
+<form action="/posts/<%= post.id %>?_method=PUT" method="POST" id="postEditForm" enctype="multipart/form-data">
   <div><input type="text" placeholder="Title" name="post[title]" value="<%= post.title %>"></div>
   <div><input type="text" placeholder="Price" name="post[price]" value="<%= post.price %>"></div>
+  <div>
+    <input type="file" id="imageUpload" accept="image/*" name="images" multiple />
+    <div>
+      <% post.images.forEach(function(image, i) { %>
+        <img src="<%= image.url %>" width="100px" />
+        <label for="image<%= i %>">Delete?</label>
+        <input type="checkbox" name="deleteImages[]" class="imageDeleteCheckbox" id="image<%= i %>" value="<%= image.public_id %>">
+      <% }); %>
+    </div>
+  </div>
   <div>
     <textarea name="post[description]" rows="10" cols="30" placeholder="Description"><%= post.description %></textarea>
   </div>
   <div><input type="text" placeholder="Location" name="post[location]" value="<%= post.location %>"></div>
   <div><input type="submit"></div>
 </form>
-<!--
-title: String,
-price: String,
-description: String,
 
-location: String,
+<!-- When the form is submited we will check how many images were uploaded  -->
+<!-- And then compare it against how many images there are existing and how many images are clicked to be deleted -->
+<script type="text/javascript">
+  //find post edit form
+  let postEditForm = document.getElementById('postEditForm');
+  // add submit listener to post edit form
+  postEditForm.addEventListener('submit', function(event) {
+    // find length of uploaded images
+    let imageUploads = document.getElementById('imageUpload').files.length;
+    imageUpload.files.length; //returns length
+    // find total number of existing images
+    let existingImgs = document.querySelectorAll('.imageDeleteCheckbox').length;
+    //find total number of potential deletions
+    let imgDeletions = document.querySelectorAll('.imageDeleteCheckbox:checked').length;
+    // figure out if the form can be submitted or not
+    let newTotal = existingImgs - imgDeletions + imageUploads
+    if(newTotal > 4) {
+      event.preventDefault();
+      let removalAmt = newTotal-4;
+      alert(`You need to remove at least ${removalAmt} (more) image${removalAmt === 1 ? '' : 's'}!`);
+    }
+  });
 
-
--->
+</script>

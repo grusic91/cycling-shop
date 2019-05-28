@@ -1,4 +1,10 @@
 const Post = require('../models/post');
+const cloudinary = require('cloudinary');
+cloudinary.config({
+  cloud_name: 'dfcxxwdrb',
+  api_key: '432389895612915',
+  api_secret: process.env.CLOUDINARY_SECRET
+});
 
 module.exports = {
  /*Posts Index*/
@@ -18,6 +24,16 @@ module.exports = {
 
   /* Post Create*/
   async postCreate(req, res, next) {
+    req.body.post.images = [];
+    for(const file of req.files) { /*req.files is array that has been created in post route (upload.array())*/
+      /*We loop over it and uploade its files to coludinary using code below*/
+      let image = await cloudinary.v2.uploader.upload(file.path); //we save uploaded files to variable
+      req.body.post.images.push({ /*we pull out of uploaded images url and id and plug them into an object
+         thet gets passed into req.body.post.images which is array of objects with data for images*/
+        url: image.secure_url,
+        public_id: image.public_id
+      })
+    }
     //use req.body to create a new Post
     let post = await Post.create(req.body.post); //once we have a post we redirect post with id
     res.redirect(`/posts/${post.id}`); //this is show page
@@ -43,12 +59,59 @@ module.exports = {
       find the post by its ID and them update it with use mongoose helper method
       and plugin information from the form from req.body. And at that point update the post
       and redirect to the show page of that post.*/
-      let post = await Post.findByIdAndUpdate(req.params.id, req.body.post, { new: true }); //new: true returns updated version
+
+    // find the post by id
+      let post = await Post.findById(req.params.id); //now we have access to the post that we editing on
+    // check if there are any images for deletion
+      if(req.body.deleteImages && req.body.deleteImages.length) {
+        // assign delete images from req.body to its own variable
+        let deleteImages = req.body.deleteImages;
+        // loop over deleteImages
+        for(const public_id of deleteImages) {
+          //delete images from cloudinary
+          await cloudinary.v2.uploader.destroy(public_id);
+          // delete image from post.images
+          for(const image of post.images) {
+            if(image.public_id === public_id) {
+              let index = post.images.indexOf(image);
+              post.images.splice(index, 1);
+            }
+          }
+        }
+      }
+      // check if there are any new images for upload
+      if(req.files) {
+        // upload images
+        for(const file of req.files) { /*req.files is array that has been created in post route (upload.array())*/
+          /*We loop over it and uploade its files to coludinary using code below*/
+          let image = await cloudinary.v2.uploader.upload(file.path); //we save uploaded files to variable
+          // add images to post.images array
+          post.images.push({ /*we pull out of uploaded images url and id and plug them into an object
+             thet gets passed into req.body.post.images which is array of objects with data for images*/
+            url: image.secure_url,
+            public_id: image.public_id
+          });
+        }
+      }
+      // update the post with new any new properties
+      post.title = req.body.post.title;
+      post.description = req.body.post.description;
+      post.price = req.body.post.price;
+      post.location = req.body.post.location;
+      // save the updated post into the db
+      post.save();
+      // redirect to the show page
       res.redirect(`/posts/${post.id}`); //this is show page
   },
 
+// Post Destrpy method
   async postDelete(req, res, next) {
-    let post = await Post.findByIdAndRemove(req.params.id);
+
+    let post = await Post.findById(req.params.id);
+    for(const image of post.images) {
+      await cloudinary.v2.uploader.destroy(image.public_id);
+    }
+    await post.remove();
     res.redirect('/posts');
   }
 }
