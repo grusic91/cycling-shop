@@ -59,7 +59,11 @@ module.exports = {
      Once we find that post then render to show view*/
      let post = await Post.findById(req.params.id).populate({
        path: 'reviews',
-       options: { sort: { '_id': -1 } }
+       options: { sort: { '_id': -1 } },
+       populate: {
+         path: 'author',
+         model: 'User'
+       }
      });
      res.render('posts/show', { post });
   },
