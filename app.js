@@ -65,11 +65,19 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// title middleware
+/* Set locals variables middleware*/
 app.use(function(req, res, next) {
+  // set page title default
   res.locals.title = 'Cycling Shop';
-  next()
-})
+  // set success flash message
+  res.locals.success = req.session.success || '';
+  delete req.session.success;
+  // set error flash message
+  res.locals.error = req.session.success || '';
+  delete req.session.error;
+  // continue on to next function in midleware chain
+  next();
+});
 
 /*
    -- Moint Routes --
@@ -94,6 +102,9 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+  console.log(err);
+  req.session.error = err.message;
+  res.redirect('back');
 });
 
 
