@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const createError = require('http-errors');
 const express = require('express');
+const engine = require('ejs-mate');
 const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -32,6 +33,9 @@ db.on('error', console.error.bind(console, "connection error:"));
 db.once('open', () => {
   console.log("we're connected!");
 })
+
+// use ejs-locus for all ejs templates:
+app.engine('ejs', engine);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -61,6 +65,12 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// title middleware
+app.use(function(req, res, next) {
+  res.locals.title = 'Cycling Shop';
+  next()
+})
+
 /*
    -- Moint Routes --
    any time users visite some of this paths,
@@ -85,5 +95,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;
