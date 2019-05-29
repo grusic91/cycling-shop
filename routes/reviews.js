@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true }); //it allows as tu pull the id from /posts/:id/reviews
+const { asyncErrorHandler } = require('../middleware');
+const {
+  reviewCreate,
+  reviewUpdate,
+  reviewDestroy
+} = require('../controllers/reviews');
 
 /* Review belong specifically to the certain post*/
 /* POST create /posts/:id/reviews
    this is create reviews */
-router.post('/',(req, res, next) => {
-  res.send("CREATE /posts/:id/reviews");
-});
+router.post('/', asyncErrorHandler(reviewCreate));
 
 /* PUT update /posts/:id/reviews/review_id
    this is update reviews */
@@ -19,6 +23,5 @@ router.put('/:review_id',(req, res, next) => {
 router.delete('/:review_id',(req, res, next) => {
   res.send("DELETE /posts/:id/reviews/:review_id");
 });
-
 
 module.exports = router;
