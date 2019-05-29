@@ -5,8 +5,8 @@ const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const geocodingClient = mbxGeocoding({ accessToken: process.env.MAPBOX_TOKEN });
 const cloudinary = require('cloudinary');
 cloudinary.config({
-  cloud_name: 'dfcxxwdrb',
-  api_key: '432389895612915',
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
   api_secret: process.env.CLOUDINARY_SECRET
 });
 
@@ -47,11 +47,14 @@ module.exports = {
     req.body.post.coordinates = response.body.features[0].geometry.coordinates;
     //use req.body to create a new Post
     let post = await Post.create(req.body.post); //once we have a post we redirect post with id
+    //success message
+    req.session.success = 'Post created successfully!';
     res.redirect(`/posts/${post.id}`); //this is show page
   },
 
   // Post Show
   async postShow(req, res, next) {
+    
     /*We use the post model to find the post by ID that get passed in to the params
      Once we find that post then render to show view*/
      let post = await Post.findById(req.params.id);
