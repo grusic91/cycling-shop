@@ -14,9 +14,7 @@ router.post('/', asyncErrorHandler(reviewCreate));
 
 /* PUT update /posts/:id/reviews/review_id
    this is update reviews */
-router.put('/:review_id',(req, res, next) => {
-  res.send("UPDATE /posts/:id/reviews/:review_id");
-});
+router.put('/:review_id', asyncErrorHandler(reviewUpdate));
 
 /* DELETE destroy /reviews/:review_id
    this is destroy reviews */
