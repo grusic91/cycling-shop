@@ -27,7 +27,12 @@ module.exports = {
 
   },
 // Reviews Destroy
-  async reviwDestroy(req, res, next) {
-
+  async reviewDestroy(req, res, next) {
+    await Post.findByIdAndUpdate(req.params.id,  {
+        $pull:  { review: req.params.review_id }
+    });
+    await Review.findByIdAndRemove(req.params.review_id);
+    req.session.success = 'Review deleted successfully';
+    res.redirect(`/posts/${req.params.id}`);
   }
 }
