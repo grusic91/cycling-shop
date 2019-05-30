@@ -1,21 +1,20 @@
 require('dotenv').config();
-
-const createError = require('http-errors');
 const express = require('express');
 const engine = require('ejs-mate');
-const mongoose = require('mongoose');
 const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const passportLocalMongoose = require('passport-local-mongoose');
-const session = require('express-session');
-const logger = require('morgan');
-const methodOverride = require('method-override');
-const config = require('./config/dev');
-
-//require model
 const User = require('./models/user');
+const session = require('express-session');
+const mongoose = require('mongoose');
+const methodOverride = require('method-override');
+const passportLocalMongoose = require('passport-local-mongoose'); //didn't use yet
+
+const createError = require('http-errors');
+const config = require('./config/dev');
 
 //require routes
 const indexRouter   = require('./routes/index');
@@ -78,14 +77,14 @@ app.use(function(req, res, next) {
   res.locals.success = req.session.success || '';
   delete req.session.success;
   // set error flash message
-  res.locals.error = req.session.success || '';
+  res.locals.error = req.session.error || '';
   delete req.session.error;
   // continue on to next function in midleware chain
   next();
 });
 
 /*
-   -- Moint Routes --
+   -- Mount Routes --
    any time users visite some of this paths,
    they are actually hitting root route
    handled in apropriate file in routes folder */
@@ -95,7 +94,9 @@ app.use('/posts/:id/reviews', reviewsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
 // error handler
