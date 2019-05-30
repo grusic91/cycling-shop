@@ -136,7 +136,7 @@ module.exports = {
       res.redirect(`/posts/${post.id}`); //this is show page
   },
 
-// Post Destrpy method
+// Post Destroy method
   async postDelete(req, res, next) {
 
     let post = await Post.findById(req.params.id);
@@ -144,6 +144,7 @@ module.exports = {
       await cloudinary.v2.uploader.destroy(image.public_id);
     }
     await post.remove();
+    req.session.success = "Post deleted successfully!";
     res.redirect('/posts');
   }
 }
