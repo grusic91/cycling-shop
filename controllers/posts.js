@@ -54,10 +54,17 @@ module.exports = {
 
   // Post Show
   async postShow(req, res, next) {
-    
+
     /*We use the post model to find the post by ID that get passed in to the params
      Once we find that post then render to show view*/
-     let post = await Post.findById(req.params.id);
+     let post = await Post.findById(req.params.id).populate({
+       path: 'reviews',
+       options: { sort: { '_id': -1 } },
+       populate: {
+         path: 'author',
+         model: 'User'
+       }
+     });
      res.render('posts/show', { post });
   },
 
@@ -129,7 +136,7 @@ module.exports = {
       res.redirect(`/posts/${post.id}`); //this is show page
   },
 
-// Post Destrpy method
+// Post Destroy method
   async postDelete(req, res, next) {
 
     let post = await Post.findById(req.params.id);
@@ -137,6 +144,7 @@ module.exports = {
       await cloudinary.v2.uploader.destroy(image.public_id);
     }
     await post.remove();
+    req.session.success = "Post deleted successfully!";
     res.redirect('/posts');
   }
 }
