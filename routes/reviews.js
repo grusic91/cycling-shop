@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true }); //it allows as tu pull the id from /posts/:id/reviews
-const { asyncErrorHandler } = require('../middleware');
+const { asyncErrorHandler, isReviewAuthor } = require('../middleware');
 const {
   reviewCreate,
   reviewUpdate,
@@ -14,7 +14,7 @@ router.post('/', asyncErrorHandler(reviewCreate));
 
 /* PUT update /posts/:id/reviews/review_id
    this is update reviews */
-router.put('/:review_id', asyncErrorHandler(reviewUpdate));
+router.put('/:review_id', isReviewAuthor, asyncErrorHandler(reviewUpdate));
 
 /* DELETE destroy /reviews/:review_id
    this is destroy reviews */
