@@ -25,3 +25,8 @@ new mapboxgl.Marker(el)
     // toggle visibility of the edit reviw form
     $(this).siblings('.edit-review-form').toggle();
   });
+
+  // Add click listener for clearing of rating from edit/new form
+  $('.clear-rating').click(function() {
+    $(this).siblings('.input-no-rate').click();
+  });
