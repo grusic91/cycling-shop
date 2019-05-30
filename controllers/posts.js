@@ -14,8 +14,12 @@ module.exports = {
  /*Posts Index*/
   async postIndex(req, res, next) {
     // we need to get acces to all of the posts
-    let posts = await Post.find({}); //with empty object inside find we get all the posts in the posts collection.
+    let posts = await Post.paginate({}, {
+      page: req.query.page || 1,
+      limit: 10
+    }); //with empty object inside find we get all the posts in the posts collection.
     //now thet we have reslutl we can do render,
+    posts.page = Number(posts.page);
     res.render('posts/index', { posts }); //we go from views (which express looks by default)
     //down to posts and render index file at which point we pass in the posts like {posts: posts}
   },
