@@ -13,6 +13,9 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const passportLocalMongoose = require('passport-local-mongoose'); //didn't use yet
 
+const seedPost = require('./seeds');
+//seedPost();
+
 const createError = require('http-errors');
 const config = require('./config/dev');
 
