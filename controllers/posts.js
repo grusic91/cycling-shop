@@ -58,7 +58,6 @@ module.exports = {
 
   // Post Show
   async postShow(req, res, next) {
-
     /*We use the post model to find the post by ID that get passed in to the params
      Once we find that post then render to show view*/
      let post = await Post.findById(req.params.id).populate({
@@ -69,7 +68,9 @@ module.exports = {
          model: 'User'
        }
      });
-     res.render('posts/show', { post });
+     const floorRating = post.calculateAvgRating();
+
+     res.render('posts/show', { post, floorRating });
   },
 
   //Post Edit
