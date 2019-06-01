@@ -1,15 +1,14 @@
-const express = require('express');
-const router = express.Router();
+const express               = require('express');
+const router                = express.Router();
 const { postRegister,
         postLogin,
-        getLogout }    = require('../controllers');
+        getLogout,
+        landingPage }       = require('../controllers');
 const { asyncErrorHandler } = require('../middleware');
 
 
-/* GET home page. */
-router.get('/',(req, res, next) => {
-  res.render('index', { title: 'Cycling Shop - Home' });
-});
+/* GET home/landing page. */
+router.get('/', asyncErrorHandler(landingPage));
 
 /* GET register. */
 router.get('/register',(req, res, next) => {

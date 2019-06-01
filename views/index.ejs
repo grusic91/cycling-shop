@@ -1,3 +1,10 @@
 <% layout('layouts/boilerplate') -%>
   <h1><%= title %></h1>
   <p>Welcome to <%= title %></p>
+  <div id="map"></div> <!-- This div with map id we select with css and JS to display map -->
+
+  <script>
+    mapboxgl.accessToken = "<%= mapBoxToken %>"; //mapBoxToken variable commes from controller
+    let posts = { features: <%- JSON.stringify(posts) %> }; //posts comes from Post.find({}) in the controller
+  </script>
+  <script src="/javascripts/allPostsClusterMap.js"></script>

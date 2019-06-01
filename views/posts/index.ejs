@@ -1,5 +1,7 @@
 <% layout ('layouts/boilerplate') -%>
 <h1>Posts Index!</h1>
+<div id="map"></div>
+
 
 <% include ../partials/paginatePosts %>
 
@@ -15,3 +17,10 @@
 <% }); %>
 
 <% include ../partials/paginatePosts %>
+
+<script>
+  mapboxgl.accessToken = "<%= mapBoxToken %>";
+  let posts = { features: <%- JSON.stringify(posts.docs) %> }; //since it is paginated we need to send posts.docs
+  //because this is the format used in mongoose paginate package
+</script>
+<script src="/javascripts/allPostsClusterMap.js"></script> <!-- There logic for maps living -->
