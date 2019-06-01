@@ -4,12 +4,7 @@ const mapBoxToken     = process.env.MAPBOX_TOKEN;
 const Post            = require('../models/post');
 const mbxGeocoding    = require('@mapbox/mapbox-sdk/services/geocoding');
 const geocodingClient = mbxGeocoding({ accessToken: mapBoxToken });
-const cloudinary      = require('cloudinary');
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET
-});
+const { cloudinary }  = require('../cloudinary');
 
 module.exports = {
  /*Posts Index*/
@@ -41,11 +36,10 @@ module.exports = {
     req.body.post.images = [];
     for(const file of req.files) { /*req.files is array that has been created in post route (upload.array())*/
       /*We loop over it and uploade its files to coludinary using code below*/
-      let image = await cloudinary.v2.uploader.upload(file.path); //we save uploaded files to variable
       req.body.post.images.push({ /*we pull out of uploaded images url and id and plug them into an object
          thet gets passed into req.body.post.images which is array of objects with data for images*/
-        url: image.secure_url,
-        public_id: image.public_id
+        url: file.secure_url,
+        public_id: file.public_id
       })
     }
     let response = await geocodingClient
@@ -118,12 +112,11 @@ module.exports = {
         // upload images
         for(const file of req.files) { /*req.files is array that has been created in post route (upload.array())*/
           /*We loop over it and uploade its files to coludinary using code below*/
-          let image = await cloudinary.v2.uploader.upload(file.path); //we save uploaded files to variable
-          // add images to post.images array
+            // add images to post.images array
           post.images.push({ /*we pull out of uploaded images url and id and plug them into an object
              thet gets passed into req.body.post.images which is array of objects with data for images*/
-            url: image.secure_url,
-            public_id: image.public_id
+            url: file.secure_url,
+            public_id: file.public_id
           });
         }
       }
