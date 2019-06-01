@@ -9,7 +9,20 @@ const PostSchema = new Schema({
   description: String,
   images: [ { url: String, public_id: String } ],
   location: String,
-  coordinates: Array,
+  geometry: { //this geometry object is displayed like a point on map
+  	type: {
+  	  type: String,
+  	  enum: ['Point'],
+  	  required: true
+  	},
+  	coordinates: {
+  	  type: [Number],
+  	  required: true
+  	}
+  },
+  properties: { //properties needs to have to display description when we click on points on map
+  	description: String
+  },
   author: {
             type: Schema.Types.ObjectId,
             ref: 'User'
