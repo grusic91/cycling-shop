@@ -49,6 +49,7 @@ module.exports = {
       })
       .send();
     req.body.post.geometry = response.body.features[0].geometry;
+    req.body.post.author = req.user._id;
     //use req.body to create a new Post
     let post = new Post(req.body.post);
 		post.properties.description = `<strong><a href="/posts/${post._id}">${post.title}</a></strong><p>${post.location}</p><p>${post.description.substring(0, 20)}...</p>`;
@@ -77,8 +78,7 @@ module.exports = {
 
   //Post Edit
   async postEdit(req, res, next) {
-    let post = await Post.findById(req.params.id);
-    res.render('posts/edit', { post });
+    res.render('posts/edit');
   },
 
   //Post update
@@ -88,8 +88,8 @@ module.exports = {
       and plugin information from the form from req.body. And at that point update the post
       and redirect to the show page of that post.*/
 
-    // find the post by id
-      let post = await Post.findById(req.params.id); //now we have access to the post that we editing on
+    // destructure post from res.locals
+      const { post } = req.locals;
     // check if there are any images for deletion
       if(req.body.deleteImages && req.body.deleteImages.length) {
         // assign delete images from req.body to its own variable
@@ -146,7 +146,7 @@ module.exports = {
 // Post Destroy method
   async postDelete(req, res, next) {
 
-    let post = await Post.findById(req.params.id);
+    const {post} = res.locals;
     for(const image of post.images) {
       await cloudinary.v2.uploader.destroy(image.public_id);
     }

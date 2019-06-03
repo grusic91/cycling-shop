@@ -45,6 +45,7 @@ app.set('view engine', 'ejs');
 //setup public assets directory
 app.use(express.static('public'));
 
+app.use(favicon(path.join(__dirname, 'public', 'cycle.ico')));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -70,10 +71,10 @@ passport.deserializeUser(User.deserializeUser());
 
 /* Set locals variables middleware*/
 app.use(function(req, res, next) {
-  req.user = {
-    '_id': '5cd438a5ce2871362c5832c6',
-    'username': 'cyclo'
-  }
+  // req.user = {
+  //   '_id': '5cd438a5ce2871362c5832c6',
+  //   'username': 'cyclo'
+  // }
   res.locals.currentUser = req.user;
   // set page title default
   res.locals.title = 'Cycling Shop';

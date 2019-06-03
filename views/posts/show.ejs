@@ -24,6 +24,7 @@
   <% }); %>
 </div>
 <div id='map'></div> <!-- In this div map is gona load to display -->
+<% if (currentUser && post.author.equals(currentUser._id)) { %>
 <div>
   <a href="/posts/<%= post.id %>/edit">
     <button>Edit Post</button>
@@ -34,7 +35,7 @@
     <input type="submit" value="Delete">
   </form>
 </div>
-
+<% } %>
 <!-- Reviews -->
 <h2>Create a Review</h2>
 <form action="/posts/<%= post.id %>/reviews" method="post">
