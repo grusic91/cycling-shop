@@ -6,7 +6,7 @@ const { getRegister,
         postLogin,
         getLogout,
         landingPage }       = require('../controllers');
-const { asyncErrorHandler } = require('../middleware');
+const { asyncErrorHandler} = require('../middleware');
 
 
 /* GET home/landing page. */
@@ -22,7 +22,7 @@ router.post('/register', asyncErrorHandler(postRegister));
 router.get('/login', getLogin);
 
 /* POST login. */
-router.post('/login', postLogin);
+router.post('/login', asyncErrorHandler(postLogin));
 
 //GET logout
 router.get('/logout', getLogout);
