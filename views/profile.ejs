@@ -10,7 +10,7 @@
 
 <p>Update Info:</p>
 
-<form id="update-profile" action="/profile?_method=PUT" method="POST">
+<form action="/profile?_method=PUT" method="POST">
   <div>
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" placeholder="username"
@@ -44,7 +44,8 @@
     <label for="image">Image:</label>
     <input type="file" id="image" name="image">
   </div>
-  <input type="submit">
+  
+  <input type="submit" id="update-profile">
 </form>
 
 <!-- this is the client side code that does the validation for form, checks to make sure that -->
