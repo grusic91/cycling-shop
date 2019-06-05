@@ -77,7 +77,7 @@ module.exports = {
   },
 
   //Post Edit
-  async postEdit(req, res, next) {
+  postEdit(req, res, next) {
     res.render('posts/edit');
   },
 
@@ -89,7 +89,7 @@ module.exports = {
       and redirect to the show page of that post.*/
 
     // destructure post from res.locals
-      const { post } = req.locals;
+      const { post } = res.locals;
     // check if there are any images for deletion
       if(req.body.deleteImages && req.body.deleteImages.length) {
         // assign delete images from req.body to its own variable
@@ -138,7 +138,7 @@ module.exports = {
       post.properties.description = `<strong><a href="/posts/${post._id}">${post.title}</a></strong><p>${post.location}</p><p>${post.description.substring(0, 20)}...</p>`;
 
       // save the updated post into the db
-      post.save();
+      await post.save();
       // redirect to the show page
       res.redirect(`/posts/${post.id}`); //this is show page
   },

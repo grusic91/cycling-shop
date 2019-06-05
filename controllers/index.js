@@ -1,7 +1,8 @@
 const Post        = require('../models/post');
 const User        = require('../models/user');
-const mapBoxToken = process.env.MAPBOX_TOKEN;
 const passport    = require('passport');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const util        = require('util');
 
 module.exports = {
   // GET landing page method /
@@ -41,6 +42,7 @@ module.exports = {
   // GET /login
   getLogin(req, res, next) {
     if (req.isAuthenticated()) return res.redirect('/');
+    if (req.query.returnTo) req.session.redirectTo = req.headers.referer;
     res.render('login', { title: 'Login' });
   },
 
@@ -62,5 +64,25 @@ module.exports = {
   getLogout(req, res, next) {
     req.logout();
     res.redirect('/');
-  }
+  },
+
+  async getProfile(req, res, next) {
+    const posts = await Post.find().where('author').equals(req.user._id).limit(10).exec();
+    res.render('profile', { posts });
+  },
+
+  async updateProfile(req, res, next) {
+		const {
+			username,
+			email
+		} = req.body;
+		const { user } = res.locals;
+		if (username) user.username = username;
+		if (email) user.email = email;
+		await user.save();
+		const login = util.promisify(req.login.bind(req));
+		await login(user);
+		req.session.success = 'Profile successfully updated!';
+		res.redirect('/profile');
+	}
 }
