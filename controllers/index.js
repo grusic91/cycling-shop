@@ -5,7 +5,7 @@ const mapBoxToken             = process.env.MAPBOX_TOKEN;
 const util                    = require('util');
 const { cloudinary }          = require('../cloudinary');
 const { deleteProfileImage }  = require('../middleware');
-const crypot                  = require('crypot');
+const crypto                  = require('crypto');
 const sgMail                  = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -106,8 +106,8 @@ module.exports = {
   },
 
   async putForgotPw(req, res, next) {
-    const token = await crypot.randomBytes(20).toString('hex');
-    const { email } req.body;
+    const token = await crypto.randomBytes(20).toString('hex');
+    const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       req.session.error = 'No account wiht that email.';
