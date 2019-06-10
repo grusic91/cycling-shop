@@ -5,6 +5,9 @@ const mapBoxToken             = process.env.MAPBOX_TOKEN;
 const util                    = require('util');
 const { cloudinary }          = require('../cloudinary');
 const { deleteProfileImage }  = require('../middleware');
+const crypot                  = require('crypot');
+const sgMail                  = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 module.exports = {
   // GET landing page method /
@@ -96,5 +99,93 @@ module.exports = {
 		await login(user);
 		req.session.success = 'Profile successfully updated!';
 		res.redirect('/profile');
-	}
+	},
+
+  getForgotPw(req, res, next) {
+    res.render('users/forgot');
+  },
+
+  async putForgotPw(req, res, next) {
+    const token = await crypot.randomBytes(20).toString('hex');
+    const { email } req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      req.session.error = 'No account wiht that email.';
+      return res.redirect('/forgot-password');
+    }
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000;
+    await user.save();
+
+    const msg = {
+      to: email,
+      from: 'Cycling Shop Admin <your@email.com>',
+      subject: 'Cycling Shop - Forgot Password / Reset',
+      text: `You are receiving this because you (or someone else)
+      have requested the reset of your password for your account.
+      Please click on the following link, or copy and paste it
+      into your browser to complete the process:
+      http://${req.headers.host}/reset/${token}
+      If you did not request this, please ignore this email and
+      your password will remain unchaged.`.replace(/      /g, ''),
+      // html: '<strong>and ea</strong>'
+    };
+    await sgMail.send(msg);
+
+    req.session.success = `An email has been sent to  ${email}, with further instructions.`;
+    res.redirect('/forgot-password');
+  },
+  async getReset(req, res, next) {
+    const { token } = req.params;
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now()}
+    });
+
+    if(!user) {
+      req.session.error = 'Password reset token is invalid of has expired';
+      return res.redirect('/forogt-password');
+    }
+
+    res.render('users/reset', { token });
+  },
+
+  async putReset(req, res, next) {
+    const { token } = req.params;
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now()}
+    });
+
+    if(!user) {
+      req.session.error = 'Password reset token is invalid of has expired';
+      return res.redirect('/forogt-password');
+    }
+
+    if (req.body.password === req.body.confirm) {
+      await user.setPassword(req.body.password);
+      user.resetPasswordToken = null;
+      user.resetPasswordExpires = null;
+      await user.save();
+      const login = util.promisify(req.login.bind(req));
+      await login(user);
+    } else {
+      req.session.error = 'Passwords do not match.';
+      return res.redirect(`/reset/${ token }`)
+    }
+
+    const msg = {
+      to: user.email,
+      from: 'Cycling Shop Admin <your@email.com>',
+      subject: 'Cycling Shop - Password - Changed',
+      text: `Hello,
+      This email is to confirm that the password for your account has just been changed.
+      If you did not make this change, please hit replay and notify us at once`.replace(/      /g, ''),
+    };
+
+    await sgMail.send(msg);
+
+    req.session.success = 'Password successfully updated!';
+    res.redirect('/');
+  }
 }
