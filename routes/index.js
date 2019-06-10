@@ -10,7 +10,11 @@ const { landingPage,
         postLogin,
         getLogout,
         getProfile,
-        updateProfile
+        updateProfile,
+        getForgotPw,
+        putForgotPw,
+        getReset,
+        putReset
          }       = require('../controllers');
 const { asyncErrorHandler,
         isLoggedIn,
@@ -53,27 +57,17 @@ router.put('/profile',
 /*If we forget password
   GET /forgot-password
 */
-router.get('/forgot-pw', (req, res, next) => {
-  res.send('GET /forgot-pw');
-});
+router.get('/forgot-password', getForgotPw);
 
 /*for reseting password in DB
   PUT /forgot-password
 */
-router.put('/forgot-pw', (req, res, next) => {
-  res.send('PUT /forgot-pw');
-});
+router.put('/forgot-password', asyncErrorHandler(putForgotPw));
 
 /*GET /reset-password/:token*/
-router.get('/reset-pw/:token', (req, res, next) => {
-  res.send('GET /reset-pw/:token')
-});
+router.get('/reset/:token', asyncErrorHandler(getReset));
 
 /*PUT /reset-password/:token*/
-router.put('/reset-pw/:token', (req, res, next) => {
-  res.send('PUT /reset-pw/:token')
-});
-
-
+router.put('/reset/:token', asyncErrorHandler(putReset));
 
 module.exports = router;
